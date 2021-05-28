@@ -20,4 +20,13 @@ describe "Quickbooks::Model::Preferences" do
 
     expect(preferences.other_prefs["SalesFormsPrefs.DefaultItem"]).to eq("1")
   end
+
+  it "is valid pref" do
+    xml = fixture("preferences.xml")
+    pref = Quickbooks::Model::Preferences.from_xml(xml)
+    pref.sales_forms.allow_shipping=true
+
+    expect(pref.valid?).to be true
+    expect(pref.sales_forms.allow_shipping?).to be true
+  end 
 end

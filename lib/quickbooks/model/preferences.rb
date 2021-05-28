@@ -6,67 +6,52 @@ module Quickbooks
       REST_RESOURCE       = 'preferences'
 
       xml_name XML_NODE
+      xml_accessor :id, :from => 'Id'
+      xml_accessor :sync_token, :from => 'SyncToken', :as => Integer
+      xml_accessor :meta_data, :from => 'MetaData', :as => MetaData
+      # xml_accessor :sales_forms, :from => "SalesFormsPrefs", :as => SalesFormsPrefs
 
       def self.create_preference_class(*attrs, &block)
         ::Class.new(BaseModel) do
           attrs.each do |a|
-            xml_reader(a.underscore, :from => a.gsub("?", ""))
+            xml_accessor(a.underscore, :from => a.gsub("?", ""))
           end
           instance_eval(&block) if block_given?
         end
       end
 
-      PREFERENCE_SECTIONS = {
-        :accounting_info      => %w(TrackDepartments DepartmentTerminology ClassTrackingPerTxnLine? ClassTrackingPerTxn? CustomerTerminology),
-        :product_and_services => %w(ForSales? ForPurchase? QuantityWithPriceAndRate? QuantityOnHand?),
-        :vendor_and_purchase  => %w(TrackingByCustomer? BillableExpenseTracking? DefaultTerms? DefaultMarkup? POCustomField),
-        :time_tracking        => %w(UseServices? BillCustomers? ShowBillRateToAll WorkWeekStartDate MarkTimeEntiresBillable?),
-        :tax                  => %w(UsingSalesTax? PartnerTaxEnabled?),
-        :currency             => %w(MultiCurrencyEnabled? HomeCurrency),
-        :report               => %w(ReportBasis)
-      }
+      # PREFERENCE_SECTIONS = {
+      #   :accounting_info      => %w(TrackDepartments DepartmentTerminology ClassTrackingPerTxnLine? ClassTrackingPerTxn? CustomerTerminology),
+      #   :product_and_services => %w(ForSales? ForPurchase? QuantityWithPriceAndRate? QuantityOnHand?),
+      #   :vendor_and_purchase  => %w(TrackingByCustomer? BillableExpenseTracking? DefaultTerms? DefaultMarkup? POCustomField),
+      #   :time_tracking        => %w(UseServices? BillCustomers? ShowBillRateToAll WorkWeekStartDate MarkTimeEntiresBillable?),
+      #   :tax                  => %w(UsingSalesTax? PartnerTaxEnabled?),
+      #   :currency             => %w(MultiCurrencyEnabled? HomeCurrency),
+      #   :report               => %w(ReportBasis)
+      # }
 
-      xml_reader :sales_forms, :from => "SalesFormsPrefs", :as => create_preference_class(*%w(
-        AllowDeposit?
-        AllowDiscount?
-        AllowEstimates?
-        AllowServiceDate?
-        AllowShipping?
-        AutoApplyCredit?
-        CustomField?
-        CustomTxnNumbers?
-        DefaultCustomerMessage
-        DefaultDiscountAccount?
-        DefaultShippingAccount?
-        DefaultTerms
-        EmailCopyToCompany?
-        EstimateMessage
-        ETransactionAttachPDF?
-        ETransactionEnabledStatus
-        ETransactionPaymentEnabled?
-        IPNSupportEnabled?
-        SalesEmailBcc
-        SalesEmailCc
-        UsingPriceLevels?
-        UsingProgressInvoicing?
+      xml_accessor :sales_forms, :from => "SalesFormsPrefs", :as => create_preference_class(*%w(
+        
+        AllowShipping
+        
       )) {
-        xml_reader :custom_fields, :as => [CustomField], :from => 'CustomField', in: 'CustomField'
+        # xml_reader :custom_fields, :as => [CustomField], :from => 'CustomField', in: 'CustomField'
       }
 
-      PREFERENCE_SECTIONS.each do |section_name, fields|
-        xml_reader section_name, :from => "#{section_name}_prefs".camelize, :as => create_preference_class(*fields)
-      end
+      # PREFERENCE_SECTIONS.each do |section_name, fields|
+      #   xml_reader section_name, :from => "#{section_name}_prefs".camelize, :as => create_preference_class(*fields)
+      # end
 
-      EmailMessage          = create_preference_class("Subject", "Message")
-      EmailMessageContainer = create_preference_class do
-        %w(InvoiceMessage EstimateMessage SalesReceiptMessage StatementMessage).each do |msg|
-          xml_reader msg.underscore, :from => msg, :as => EmailMessage
-        end
-      end
+      # EmailMessage          = create_preference_class("Subject", "Message")
+      # EmailMessageContainer = create_preference_class do
+      #   %w(InvoiceMessage EstimateMessage SalesReceiptMessage StatementMessage).each do |msg|
+      #     xml_reader msg.underscore, :from => msg, :as => EmailMessage
+      #   end
+      # end
 
-      xml_reader :email_messages, :from => "EmailMessagesPrefs", as: EmailMessageContainer
+      # xml_reader :email_messages, :from => "EmailMessagesPrefs", as: EmailMessageContainer
 
-      xml_reader :other_prefs, :from => "OtherPrefs/NameValue", :as => { :key => "Name", :value => "Value" }
+      # xml_reader :other_prefs, :from => "OtherPrefs/NameValue", :as => { :key => "Name", :value => "Value" }
     end
 
   end
