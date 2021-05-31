@@ -17,10 +17,7 @@ module Quickbooks
       # insert the static namespaces in the first opening tag that matches the +model_name+
       def to_xml_inject_ns(model_name, options = {})
         s = StringIO.new
-        binding.pry
         xml = to_xml(options).write_to(s, :indent => 0, :indent_text => '')
-        # s.string='<Preferences><Id>1</Id><SyncToken>5</SyncToken><SalesFormsPrefs><AllowShipping>true</AllowShipping></SalesFormsPrefs></Preferences>'
-        # options={:name=>"Preferences", :namespace=>nil, :sparse=>true}
         destination_name = options.fetch(:destination_name, nil)
         destination_name ||= model_name
 
@@ -28,7 +25,6 @@ module Quickbooks
         sparse_string = %{sparse="#{sparse}"}
         step1 = s.string.sub("<#{model_name}>", "<#{destination_name} #{Quickbooks::Service::BaseService::XML_NS} #{sparse_string}>")
         step2 = step1.sub("</#{model_name}>", "</#{destination_name}>")
-        binding.pry
         step2
       end
 

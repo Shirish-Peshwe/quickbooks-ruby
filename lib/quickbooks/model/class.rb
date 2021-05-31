@@ -1,13 +1,13 @@
 module Quickbooks
   module Model
     class Class < BaseModel
-      # XML_COLLECTION_NODE = "SalesFormsPrefs"
-      # XML_NODE = "SalesFormsPrefs"
-      # REST_RESOURCE = 'salesformsprefs'
+      XML_COLLECTION_NODE = "Class"
+      XML_NODE = "Class"
+      REST_RESOURCE = 'class'
       include NameEntity::Quality
       include NameEntity::PermitAlterations
 
-      # xml_name XML_NODE
+      xml_name XML_NODE
       xml_accessor :id, :from => 'Id'
       xml_accessor :sync_token, :from => 'SyncToken', :as => Integer
       xml_accessor :meta_data, :from => 'MetaData', :as => MetaData
